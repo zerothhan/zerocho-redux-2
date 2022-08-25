@@ -1,25 +1,13 @@
 const { createStore } = require("redux");
 const reducer = require("./reducers");
-const { logIn, logOut, addPost } = require("./actions/action");
-
-/*
-const initialState = {
-  user: null,
-  isLoggingIn: true,
-  posts: [],
-  comments: [],
-  favorites: [],
-  history: [],
-  likes: [],
-  followers: [],
-};
-*/
+const { addPost } = require("./actions/post");
+const { logIn, logOut } = require("./actions/user");
 
 const initialState = {
   user: {
     isLoggingIn: true,
     data: null,
-  },  
+  },
   posts: [],
   comments: [],
   favorites: [],
@@ -29,6 +17,7 @@ const initialState = {
 };
 
 const store = createStore(reducer, initialState);
+
 // react-redux 안에 들어있음. 실제 react-redux 쓸 일은 거의 없음. 에러 디버깅할 때만 씀
 store.subscribe(() => {
   // 화면 바꿔주는 코드
