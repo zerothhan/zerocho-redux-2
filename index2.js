@@ -15,22 +15,21 @@ const initialState = {
 // compose 없이도 동작함
 // compose를 하는 이유 : applyMiddleware 말고 redux devtool 같은 것들도 추가적으로 붙일 때 compose로 함수를 합성한다.
 const firstMiddleware = (store) => (dispatch) => (action) => {
-  console.log("action log", action);
-  // dispatch 전 기능 추가
+  console.log("로깅", action);
   dispatch(action);
-  // dispatch 후 기능 추가
-  console.log("action end");
 };
 
-const enhancer = applyMiddleware(firstMiddleware);
+const thunkMiddleware = (store) => (dispatch) => (action) => {
+  // 비동기
+  if (typeof action === "function") {
+    return action(store.dispatch, store.getState);
+  }
+  return dispatch(action); // 동기
+};
+
+const enhancer = applyMiddleware(firstMiddleware, thunkMiddleware);
 
 const store = createStore(reducer, initialState, enhancer);
-
-// react-redux 안에 들어있음. 실제 react-redux 쓸 일은 거의 없음. 에러 디버깅할 때만 씀
-store.subscribe(() => {
-  // 화면 바꿔주는 코드
-  console.log("changed");
-});
 
 console.log("1st", store.getState());
 
@@ -47,24 +46,24 @@ store.dispatch(
 );
 console.log("2nd", store.getState());
 
-store.dispatch(
-  addPost({
-    userId: 1,
-    id: 1,
-    content: "안녕하세요. 리덕스",
-  })
-);
-console.log("3rd", store.getState());
+// store.dispatch(
+//   addPost({
+//     userId: 1,
+//     id: 1,
+//     content: "안녕하세요. 리덕스",
+//   })
+// );
+// console.log("3rd", store.getState());
 
-store.dispatch(
-  addPost({
-    userId: 1,
-    id: 2,
-    content: "두번째 리덕스",
-  })
-);
-console.log("4th", store.getState());
+// store.dispatch(
+//   addPost({
+//     userId: 1,
+//     id: 2,
+//     content: "두번째 리덕스",
+//   })
+// );
+// console.log("4th", store.getState());
 
-store.dispatch(logOut());
+// store.dispatch(logOut());
 
-console.log("5th", store.getState());
+// console.log("5th", store.getState());
